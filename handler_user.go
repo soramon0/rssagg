@@ -1,34 +1,16 @@
 package main
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/soramon0/rssagg/auth"
 	"github.com/soramon0/rssagg/internal/database"
 )
 
-func (apiCfg *apiConfig) handleGetUser(w http.ResponseWriter, r *http.Request) {
-	apiKey, err := auth.GetAPIKey(r.Header)
-	if err != nil {
-		respondWithError(w, 500, err.Error())
-		return
-	}
-
-	user, err := apiCfg.DB.GetUserByAPIKey(r.Context(), apiKey)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			respondWithError(w, 404, "user not found")
-			return
-		}
-		respondWithError(w, 400, err.Error())
-		return
-	}
-
+func (apiCfg *apiConfig) handleGetUser(w http.ResponseWriter, r *http.Request, user database.User) {
 	respondWithJSON(w, 200, user)
 }
 
